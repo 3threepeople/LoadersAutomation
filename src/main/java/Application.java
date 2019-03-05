@@ -63,6 +63,7 @@ public class Application {
 
 
         for (int i = 0; i < splitloaders.length; i++) {
+
             String loadername = splitloaders[i];
 
             String JsonDirectory = ParentDirectories[i];
@@ -102,8 +103,8 @@ public class Application {
                 Ticket.sendKeys("9999");
                 Thread.sleep(3000);
                 driver.findElement(By.id("clickSubmitButton")).click();
+                Thread.sleep(3000);
 
-                Thread.sleep(2000);
 
                 try{
                     WebElement YES = driver.findElement(By.xpath("//button[contains(text(),'YES')]"));
@@ -112,23 +113,17 @@ public class Application {
                     System.out.println("Exceptioan seeen - " + e);
                 }
 
+                Thread.sleep(5000);
 
-                WebElement OK = driver.findElement(By.xpath("//button[contains(text(),'OK')]"));
-                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", OK);
+
+              WebElement OK =driver.findElements(By.xpath("//button[contains(text(),'OK')]")).get(1);
+              ((JavascriptExecutor) driver).executeScript("arguments[0].click();", OK);
+
+                Thread.sleep(3000);
 
 
             }
-
-
-            try {
-                WebElement Hide = driver.findElement(By.cssSelector("button.btn.btn-primary.btn-xs"));
-                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", Hide);
-            }catch(Exception e){
-                System.out.println("Exception seen - " + e);
-            }
-
-            Thread.sleep(2000);
-            //Selenium Code to comeback to homepage loaders
+        }
 
         }
 
@@ -136,4 +131,4 @@ public class Application {
     }
 
 
-}
+
