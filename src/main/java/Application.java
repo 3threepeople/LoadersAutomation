@@ -4,13 +4,12 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import sun.security.krb5.internal.Ticket;
+
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.io.File;
-import java.util.Scanner;
 
 public class Application {
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -19,7 +18,7 @@ public class Application {
         RadioButton radioButton = new RadioButton();
 
         Properties Prop = new Properties();
-        FileInputStream fis = new FileInputStream("/Users/shridharnraykar/IdeaProjects/Selenium_Demo/src/main/java/models/properties");
+        FileInputStream fis = new FileInputStream("/Users/shridharnraykar/IdeaProjects/LoadersAutomation/src/main/resources/Properties");
         Prop.load(fis);
 
         Scanner key = new Scanner(System.in);
@@ -80,55 +79,64 @@ public class Application {
 
             String radio = radioButton.getRadio(loadername);
 
-            driver.findElement(By.id(radio)).click();
-            Thread.sleep(2000);
-
-
+            WebElement radiofind = driver.findElement(By.id(radio));
+            JavascriptExecutor executor = (JavascriptExecutor) driver;
+            executor.executeScript("arguments[0].click();", radiofind);
 
             for (int m = 0; m < Jsons.size(); m++) {
-                String toloadpath = JsonDirectory + "/"+ Jsons.get(m);
+                String toloadpath = JsonDirectory + "/" + Jsons.get(m);
 
                 driver.findElement(By.name("file")).sendKeys(toloadpath);
                 Thread.sleep(5000);
 
-                WebElement ele=driver.findElement(By.id("loadToDb"));
+                WebElement ele = driver.findElement(By.id("loadToDb"));
                 ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", ele);
 
-                JavascriptExecutor executor = (JavascriptExecutor) driver;
+                executor = (JavascriptExecutor) driver;
                 executor.executeScript("arguments[0].click();", ele);
                 Thread.sleep(1000);
 
-                WebElement Ticket= driver.findElement(By.id("ticketNumber"));
-                Ticket.clear();
-                Ticket.sendKeys("9999");
-                Thread.sleep(3000);
-                driver.findElement(By.id("clickSubmitButton")).click();
-                Thread.sleep(3000);
+                String redmine = driver.findElement(By.xpath("//h4[contains(text(),\"Redmine ticket number\")]")).getText();
+                //System.out.println(redmine);
 
+                if (redmine.equals("Redmine ticket number")) {
+                    WebElement Ticket = driver.findElement(By.id("ticketNumber"));
+                    Ticket.clear();
+                    Ticket.sendKeys("9999");
+                    Thread.sleep(3000);
+                    driver.findElement(By.id("clickSubmitButton")).click();
+                    Thread.sleep(3000);
 
-                try{
-                    WebElement YES = driver.findElement(By.xpath("//button[contains(text(),'YES')]"));
-                    ((JavascriptExecutor) driver).executeScript("arguments[0].click();", YES);
-                }catch (Exception e){
-                    System.out.println("Exceptioan seeen - " + e);
+                    String override = driver.findElement(By.xpath("//h4[contains(text(),\"Data already exists. Do you want to overwrite?\")]")).getText();
+                    //System.out.println(override);
+                    if (override.equals("Data already exists. Do you want to overwrite?")) {
+                        WebElement element = driver.findElement(By.xpath("//button[contains(text(),'YES')]"));
+                        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+                        Thread.sleep(2000);
+                    }
+
+                    WebElement OK = driver.findElements(By.xpath("//button[contains(text(),'OK')]")).get(1);
+                    ((JavascriptExecutor) driver).executeScript("arguments[0].click();", OK);
+
                 }
-
-                Thread.sleep(5000);
-
-
-              WebElement OK =driver.findElements(By.xpath("//button[contains(text(),'OK')]")).get(1);
-              ((JavascriptExecutor) driver).executeScript("arguments[0].click();", OK);
-
-                Thread.sleep(3000);
+                else
+                {
+                    System.out.println("Invalid JSON: " + toloadpath);
+                }
 
 
             }
-        }
 
         }
+            try {
+                WebElement Hide = driver.findElement(By.cssSelector("button.btn.btn-primary.btn-xs"));
+                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", Hide);
+            } catch (Exception e) {
+                System.out.println("Exception seen - " + e);
+            }
 
+            Thread.sleep(1000);
 
+        }
     }
-
-
 
