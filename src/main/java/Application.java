@@ -36,6 +36,7 @@ public class Application {
       System.out.println("Enter OTP:");
       String otp = key.nextLine();
 
+      //Add log with logged in
       driver.findElement(By.name("htmlKey")).sendKeys(otp);
       driver.findElement(By.cssSelector("button.button")).click();
       Thread.sleep(2000);
@@ -56,14 +57,15 @@ public class Application {
       String[] Tickets=splittickets.split(",");
 
       if (ParentDirectories.length != splitloaders.length) {
+           //log
             System.out.println("The number of Directories and Loaders are not same...Please Check it:");
             System.exit(0); }
       if(ParentDirectories.length!=Tickets.length)
       {
+        //log
         System.out.println("The Number of Tickets is equal to Number of Loaders");
         System.exit(0);
       }
-
 
       for (int i = 0; i < splitloaders.length; i++) {
             String loadername = splitloaders[i];
@@ -80,9 +82,11 @@ public class Application {
             }
             catch (NullPointerException e)
             {
+              //log
               System.out.println("JSONS not present in the given FilePath:"+ ParentDirectories[i]);
               continue;
             }
+            //add log Processing Loader loadername
             String radio = radioButton.getRadio(loadername);
             WebElement radiofind = driver.findElement(By.id(radio));
             JavascriptExecutor executor = (JavascriptExecutor) driver;
@@ -90,6 +94,7 @@ public class Application {
 
             for (int m = 0; m < Jsons.size(); m++) {
                 String toloadpath = JsonDirectory + "/" + Jsons.get(m);
+                //add log processing JSON name JSONs.get(m)
                 driver.findElement(By.name("file")).sendKeys(toloadpath);
                 Thread.sleep(5000);
 
@@ -121,12 +126,16 @@ public class Application {
                     Thread.sleep(1000);
                 }
                 else
+                  {
+                    //log
                   System.out.println("Invalid JSON: " + toloadpath);
+                }
             }
           try {
             WebElement Hide = driver.findElement(By.cssSelector("button.btn.btn-primary.btn-xs"));
             ((JavascriptExecutor) driver).executeScript("arguments[0].click();", Hide);
           } catch (Exception e) {
+              //log
             System.out.println("Exception seen - " + e);
           }
           Thread.sleep(1000);
