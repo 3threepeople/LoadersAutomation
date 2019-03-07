@@ -15,11 +15,11 @@ public class Application {
 
 
       RadioButton radioButton = new RadioButton();
-      String ProperiesPath= System.getProperty("props.path");
+      String PropertiesPath= System.getProperty("props.path");
       Scanner key = new Scanner(System.in);
       Properties Properties = new Properties();
 
-      FileInputStream fis = new FileInputStream(ProperiesPath);
+      FileInputStream fis = new FileInputStream(PropertiesPath);
       Properties.load(fis);
 
       String ChromeDriverPath=System.getProperty("chromedriver.path");
@@ -126,6 +126,26 @@ public class Application {
                     ((JavascriptExecutor) driver).executeScript("arguments[0].click();", OK);
 
                     Thread.sleep(1000);
+                }
+                else if(driver.findElement(By.xpath("//h4[contains(text(),\"Enter roles to configure same data\")]")).getText().equals("Enter roles to configure same data")){
+                    driver.findElement(By.id("skipButtonForRoles")).click();
+                    WebElement Ticket = driver.findElement(By.id("ticketNumber"));
+                    Ticket.clear();
+                    Ticket.sendKeys(Tickets[i]);
+                    Thread.sleep(3000);
+                    driver.findElement(By.id("clickSubmitButton")).click();
+                    Thread.sleep(3000);
+
+                    String OverRideBody = driver.findElement(By.xpath("//h4[contains(text(),\"Data already exists. Do you want to overwrite?\")]")).getText();
+                    if (OverRideBody.equals("Data already exists. Do you want to overwrite?")) {
+                        WebElement element = driver.findElement(By.xpath("//button[contains(text(),'YES')]"));
+                        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+                        Thread.sleep(2000);
+                    }
+                    WebElement OK = driver.findElements(By.xpath("//button[contains(text(),'OK')]")).get(1);
+                    ((JavascriptExecutor) driver).executeScript("arguments[0].click();", OK);
+
+
                 }
                 else
                   System.out.println("Invalid JSON: " + toloadpath);
