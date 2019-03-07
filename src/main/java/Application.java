@@ -49,12 +49,19 @@ public class Application {
       String jsonpath = Properties.getProperty("jsonpath");
       String[] ParentDirectories = jsonpath.split(",");
 
-      String loaders = Properties.getProperty("loader");
+      String loaders = Properties.getProperty("loaders");
       String[] splitloaders = loaders.split(",");
+
+      String splittickets=Properties.getProperty("Tickets");
+      String[] Tickets=splittickets.split(",");
 
       if (ParentDirectories.length != splitloaders.length) {
             System.out.println("The number of Directories and Loaders are not same...Please Check it:");
-            System.exit(0);
+            System.exit(0); }
+      if(ParentDirectories.length!=Tickets.length)
+      {
+        System.out.println("The Number of Tickets is equal to Number of Loaders");
+        System.exit(0);
       }
 
 
@@ -65,9 +72,16 @@ public class Application {
             String JsonFiles[] = f.list();
             List<String> Jsons = new ArrayList<String>();
 
-            for (int k = 0; k < JsonFiles.length; k++) {
+            try {
+              for (int k = 0; k < JsonFiles.length; k++) {
                 if (JsonFiles[k].endsWith(".json"))
-                    Jsons.add(JsonFiles[k]);
+                  Jsons.add(JsonFiles[k]);
+              }
+            }
+            catch (NullPointerException e)
+            {
+              System.out.println("JSONS not present in the given FilePath:"+ ParentDirectories[i]);
+              continue;
             }
             String radio = radioButton.getRadio(loadername);
             WebElement radiofind = driver.findElement(By.id(radio));
@@ -90,7 +104,7 @@ public class Application {
                 if (TicketBody.equals("Redmine ticket number")) {
                     WebElement Ticket = driver.findElement(By.id("ticketNumber"));
                     Ticket.clear();
-                    Ticket.sendKeys("9999");
+                    Ticket.sendKeys(Tickets[i]);
                     Thread.sleep(3000);
                     driver.findElement(By.id("clickSubmitButton")).click();
                     Thread.sleep(3000);
