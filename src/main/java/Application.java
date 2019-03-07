@@ -4,7 +4,6 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
@@ -13,19 +12,19 @@ import java.io.File;
 public class Application {
     public static void main(String[] args) throws IOException, InterruptedException {
 
-
       RadioButton radioButton = new RadioButton();
-      String ProperiesPath= System.getProperty("props.path");
+      String PropertiesPath= System.getProperty("props.path");
       Scanner key = new Scanner(System.in);
       Properties Properties = new Properties();
 
-      FileInputStream fis = new FileInputStream(ProperiesPath);
+      FileInputStream fis = new FileInputStream(PropertiesPath);
       Properties.load(fis);
 
       String ChromeDriverPath=System.getProperty("chromedriver.path");
       System.setProperty("webdriver.chrome.driver", ChromeDriverPath);
       WebDriver driver = new ChromeDriver();
       driver.manage().window().fullscreen();
+      JavascriptExecutor executor = (JavascriptExecutor) driver;
 
       driver.get(Properties.getProperty("URL"));
       driver.findElement(By.name("username")).sendKeys(Properties.getProperty("username"));
@@ -68,8 +67,8 @@ public class Application {
       }
 
       for (int i = 0; i < splitloaders.length; i++) {
-            String loadername = splitloaders[i];
-            String JsonDirectory = ParentDirectories[i];
+            String loadername = splitloaders[i].trim();
+            String JsonDirectory = ParentDirectories[i].trim();
             File f = new File(JsonDirectory);
             String JsonFiles[] = f.list();
             List<String> Jsons = new ArrayList<String>();
@@ -88,13 +87,27 @@ public class Application {
             }
             //add log Processing Loader loadername
             String radio = radioButton.getRadio(loadername);
-            WebElement radiofind = driver.findElement(By.id(radio));
-            JavascriptExecutor executor = (JavascriptExecutor) driver;
-            executor.executeScript("arguments[0].click();", radiofind);
+            if(null!=radio) {
+              try {
+                WebElement radiofind = driver.findElement(By.id(radio));
+                executor.executeScript("arguments[0].click();", radiofind);
+              }
+              catch (NoSuchElementException e)
+              {
+                System.out.println("Cannot find the loader:"+loadername);
+                continue;
+              }
+            }
+            else {
+              System.out.println("This Loader is not present in our Configurations:"+loadername);
+              System.out.println(radioButton.Radio.keySet());
+              continue;
+            }
 
             for (int m = 0; m < Jsons.size(); m++) {
                 String toloadpath = JsonDirectory + "/" + Jsons.get(m);
                 //add log processing JSON name JSONs.get(m)
+                String toloadpath = JsonDirectory + "/" + Jsons.get(m).replace(" ","");
                 driver.findElement(By.name("file")).sendKeys(toloadpath);
                 Thread.sleep(5000);
 
@@ -105,11 +118,10 @@ public class Application {
                 Thread.sleep(1000);
 
                 String TicketBody = driver.findElement(By.xpath("//h4[contains(text(),\"Redmine ticket number\")]")).getText();
-
                 if (TicketBody.equals("Redmine ticket number")) {
                     WebElement Ticket = driver.findElement(By.id("ticketNumber"));
                     Ticket.clear();
-                    Ticket.sendKeys(Tickets[i]);
+                    Ticket.sendKeys(Tickets[i].trim());
                     Thread.sleep(3000);
                     driver.findElement(By.id("clickSubmitButton")).click();
                     Thread.sleep(3000);
@@ -125,10 +137,28 @@ public class Application {
 
                     Thread.sleep(1000);
                 }
+                else if(driver.findElement(By.xpath("//h4[contains(text(),\"Enter roles to configure same data\")]")).getText().equals("Enter roles to configure same data")){
+                    driver.findElement(By.id("skipButtonForRoles")).click();
+                    WebElement Ticket = driver.findElement(By.id("ticketNumber"));
+                    Ticket.clear();
+                    Ticket.sendKeys(Tickets[i]);
+                    Thread.sleep(3000);
+                    driver.findElement(By.id("clickSubmitButton")).click();
+                    Thread.sleep(3000);
+
+                    String OverRideBody = driver.findElement(By.xpath("//h4[contains(text(),\"Data already exists. Do you want to overwrite?\")]")).getText();
+                    if (OverRideBody.equals("Data already exists. Do you want to overwrite?")) {
+                        WebElement element = driver.findElement(By.xpath("//button[contains(text(),'YES')]"));
+                        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+                        Thread.sleep(2000);
+                    }
+                    WebElement OK = driver.findElements(By.xpath("//button[contains(text(),'OK')]")).get(1);
+                    ((JavascriptExecutor) driver).executeScript("arguments[0].click();", OK);
+                }
                 else
                   {
                     //log
-                  System.out.println("Invalid JSON: " + toloadpath);
+                    System.out.println(Jsons.get(m)+" is not loading in "+loadername);
                 }
             }
           try {
@@ -140,5 +170,6 @@ public class Application {
           }
           Thread.sleep(1000);
         }
+       driver.quit();
     }
 }
