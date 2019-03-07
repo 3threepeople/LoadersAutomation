@@ -58,7 +58,9 @@ public class Application {
       if (ParentDirectories.length != splitloaders.length) {
            //log
             System.out.println("The number of Directories and Loaders are not same...Please Check it:");
-            System.exit(0); }
+            System.exit(0);
+      }
+
       if(ParentDirectories.length!=Tickets.length)
       {
         //log
@@ -105,7 +107,6 @@ public class Application {
             }
 
             for (int m = 0; m < Jsons.size(); m++) {
-                String toloadpath = JsonDirectory + "/" + Jsons.get(m);
                 //add log processing JSON name JSONs.get(m)
                 String toloadpath = JsonDirectory + "/" + Jsons.get(m).replace(" ","");
                 driver.findElement(By.name("file")).sendKeys(toloadpath);
