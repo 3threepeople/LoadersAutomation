@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class RadioButton {
 
-    Map<String, String> Radio = new HashMap<String, String>();
+    public Map<String, String> Radio = new HashMap<String, String>();
 
     public RadioButton() {
         Radio.put("3rd party etl form", "third_party_etl_form");

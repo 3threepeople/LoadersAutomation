@@ -26,6 +26,7 @@ public class Application {
       System.setProperty("webdriver.chrome.driver", ChromeDriverPath);
       WebDriver driver = new ChromeDriver();
       driver.manage().window().fullscreen();
+      JavascriptExecutor executor = (JavascriptExecutor) driver;
 
       driver.get(Properties.getProperty("URL"));
       driver.findElement(By.name("username")).sendKeys(Properties.getProperty("username"));
@@ -84,9 +85,15 @@ public class Application {
               continue;
             }
             String radio = radioButton.getRadio(loadername);
-            WebElement radiofind = driver.findElement(By.id(radio));
-            JavascriptExecutor executor = (JavascriptExecutor) driver;
-            executor.executeScript("arguments[0].click();", radiofind);
+            if(null!=radio) {
+              WebElement radiofind = driver.findElement(By.id(radio));
+              executor.executeScript("arguments[0].click();", radiofind);
+            }
+            else {
+              System.out.println("This Loader is not exist in our Configurations:"+loadername);
+              System.out.println(radioButton.Radio.keySet());
+              continue;
+            }
 
             for (int m = 0; m < Jsons.size(); m++) {
                 String toloadpath = JsonDirectory + "/" + Jsons.get(m);
