@@ -4,7 +4,6 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
@@ -12,7 +11,6 @@ import java.io.File;
 
 public class Application {
     public static void main(String[] args) throws IOException, InterruptedException {
-
 
       RadioButton radioButton = new RadioButton();
       String PropertiesPath= System.getProperty("props.path");
@@ -67,8 +65,8 @@ public class Application {
 
 
       for (int i = 0; i < splitloaders.length; i++) {
-            String loadername = splitloaders[i];
-            String JsonDirectory = ParentDirectories[i];
+            String loadername = splitloaders[i].trim();
+            String JsonDirectory = ParentDirectories[i].trim();
             File f = new File(JsonDirectory);
             String JsonFiles[] = f.list();
             List<String> Jsons = new ArrayList<String>();
@@ -86,17 +84,24 @@ public class Application {
             }
             String radio = radioButton.getRadio(loadername);
             if(null!=radio) {
-              WebElement radiofind = driver.findElement(By.id(radio));
-              executor.executeScript("arguments[0].click();", radiofind);
+              try {
+                WebElement radiofind = driver.findElement(By.id(radio));
+                executor.executeScript("arguments[0].click();", radiofind);
+              }
+              catch (NoSuchElementException e)
+              {
+                System.out.println("Cannot find the loader:"+loadername);
+                continue;
+              }
             }
             else {
-              System.out.println("This Loader is not exist in our Configurations:"+loadername);
+              System.out.println("This Loader is not present in our Configurations:"+loadername);
               System.out.println(radioButton.Radio.keySet());
               continue;
             }
 
             for (int m = 0; m < Jsons.size(); m++) {
-                String toloadpath = JsonDirectory + "/" + Jsons.get(m);
+                String toloadpath = JsonDirectory + "/" + Jsons.get(m).replace(" ","");
                 driver.findElement(By.name("file")).sendKeys(toloadpath);
                 Thread.sleep(5000);
 
@@ -107,11 +112,10 @@ public class Application {
                 Thread.sleep(1000);
 
                 String TicketBody = driver.findElement(By.xpath("//h4[contains(text(),\"Redmine ticket number\")]")).getText();
-
                 if (TicketBody.equals("Redmine ticket number")) {
                     WebElement Ticket = driver.findElement(By.id("ticketNumber"));
                     Ticket.clear();
-                    Ticket.sendKeys(Tickets[i]);
+                    Ticket.sendKeys(Tickets[i].trim());
                     Thread.sleep(3000);
                     driver.findElement(By.id("clickSubmitButton")).click();
                     Thread.sleep(3000);
@@ -144,11 +148,9 @@ public class Application {
                     }
                     WebElement OK = driver.findElements(By.xpath("//button[contains(text(),'OK')]")).get(1);
                     ((JavascriptExecutor) driver).executeScript("arguments[0].click();", OK);
-
-
                 }
                 else
-                  System.out.println("Invalid JSON: " + toloadpath);
+                  System.out.println(Jsons.get(m)+" is not loading in "+loadername);
             }
           try {
             WebElement Hide = driver.findElement(By.cssSelector("button.btn.btn-primary.btn-xs"));
@@ -158,5 +160,6 @@ public class Application {
           }
           Thread.sleep(1000);
         }
+       driver.quit();
     }
 }

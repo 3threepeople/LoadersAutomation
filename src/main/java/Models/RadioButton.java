@@ -21,7 +21,7 @@ public class RadioButton {
         Radio.put("Step 4: add content for campaigns", "campaign_content_campaigns");
         Radio.put("Step 5: add vendor info", "vendor_info");
         Radio.put("health_tips", "health_tips");
-        Radio.put(" Gameday Client Config", "gameday_client_config");
+        Radio.put("Gameday Client Config", "gameday_client_config");
         Radio.put("campaign_content - Current Status", "campaign_content_current_status");
         Radio.put("campaign_content - Health Quest", "campaign_content_health_quest");
         Radio.put("campaign_content - Plan choice", "campaign_content_plan_choice");
@@ -54,9 +54,6 @@ public class RadioButton {
         Radio.put("client tags", "client_tag");
         Radio.put("question", "question");
         Radio.put("quiz", "quiz");
-
-
-
 
 
     }
