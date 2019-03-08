@@ -26,6 +26,24 @@ public class Application {
       driver.manage().window().fullscreen();
       JavascriptExecutor executor = (JavascriptExecutor) driver;
 
+      String jsonpath = Properties.getProperty("jsonpath");
+      String[] ParentDirectories = jsonpath.split(",");
+
+      String loaders = Properties.getProperty("loaders");
+      String[] splitloaders = loaders.split(",");
+
+      String splittickets=Properties.getProperty("Tickets");
+      String[] Tickets=splittickets.split(",");
+
+      if (ParentDirectories.length != splitloaders.length) {
+        System.out.println("The number of Directories and Loaders are not same...Please Check it:");
+        System.exit(0); }
+      if(ParentDirectories.length!=Tickets.length)
+      {
+        System.out.println("The Number of Tickets is equal to Number of Loaders");
+        System.exit(0);
+      }
+
       driver.get(Properties.getProperty("URL"));
       driver.findElement(By.name("username")).sendKeys(Properties.getProperty("username"));
       driver.findElement(By.name("password")).sendKeys(Properties.getProperty("password"));
@@ -43,26 +61,6 @@ public class Application {
       Thread.sleep(3000);
       driver.findElement(By.className("admin-item")).click();
       Thread.sleep(3000);
-
-
-      String jsonpath = Properties.getProperty("jsonpath");
-      String[] ParentDirectories = jsonpath.split(",");
-
-      String loaders = Properties.getProperty("loaders");
-      String[] splitloaders = loaders.split(",");
-
-      String splittickets=Properties.getProperty("Tickets");
-      String[] Tickets=splittickets.split(",");
-
-      if (ParentDirectories.length != splitloaders.length) {
-            System.out.println("The number of Directories and Loaders are not same...Please Check it:");
-            System.exit(0); }
-      if(ParentDirectories.length!=Tickets.length)
-      {
-        System.out.println("The Number of Tickets is equal to Number of Loaders");
-        System.exit(0);
-      }
-
 
       for (int i = 0; i < splitloaders.length; i++) {
             String loadername = splitloaders[i].trim();
@@ -101,7 +99,7 @@ public class Application {
             }
 
             for (int m = 0; m < Jsons.size(); m++) {
-                String toloadpath = JsonDirectory + "/" + Jsons.get(m).replace(" ","");
+                String toloadpath = JsonDirectory + "/" + Jsons.get(m);
                 driver.findElement(By.name("file")).sendKeys(toloadpath);
                 Thread.sleep(5000);
 
@@ -135,7 +133,7 @@ public class Application {
                     driver.findElement(By.id("skipButtonForRoles")).click();
                     WebElement Ticket = driver.findElement(By.id("ticketNumber"));
                     Ticket.clear();
-                    Ticket.sendKeys(Tickets[i]);
+                    Ticket.sendKeys(Tickets[i].trim());
                     Thread.sleep(3000);
                     driver.findElement(By.id("clickSubmitButton")).click();
                     Thread.sleep(3000);
