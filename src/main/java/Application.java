@@ -1,4 +1,5 @@
 import Models.RadioButton;
+import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -20,12 +21,6 @@ public class Application {
       FileInputStream fis = new FileInputStream(PropertiesPath);
       Properties.load(fis);
 
-      String ChromeDriverPath=System.getProperty("chromedriver.path");
-      System.setProperty("webdriver.chrome.driver", ChromeDriverPath);
-      WebDriver driver = new ChromeDriver();
-      driver.manage().window().fullscreen();
-      JavascriptExecutor executor = (JavascriptExecutor) driver;
-
       String jsonpath = Properties.getProperty("jsonpath");
       String[] ParentDirectories = jsonpath.split(",");
 
@@ -40,9 +35,15 @@ public class Application {
         System.exit(0); }
       if(ParentDirectories.length!=Tickets.length)
       {
-        System.out.println("The Number of Tickets is equal to Number of Loaders");
+        System.out.println("The Number of Tickets is not equal to Number of Loaders");
         System.exit(0);
       }
+
+      String ChromeDriverPath=System.getProperty("chromedriver.path");
+      System.setProperty("webdriver.chrome.driver", ChromeDriverPath);
+      WebDriver driver = new ChromeDriver();
+      driver.manage().window().fullscreen();
+      JavascriptExecutor executor = (JavascriptExecutor) driver;
 
       driver.get(Properties.getProperty("URL"));
       driver.findElement(By.name("username")).sendKeys(Properties.getProperty("username"));
@@ -126,14 +127,15 @@ public class Application {
                     }
                     WebElement OK = driver.findElements(By.xpath("//button[contains(text(),'OK')]")).get(1);
                     ((JavascriptExecutor) driver).executeScript("arguments[0].click();", OK);
-
-                    Thread.sleep(1000);
+                    Thread.sleep(2000);
+                    System.out.println(Jsons.get(m)+ "is loaded");
                 }
                 else if(driver.findElement(By.xpath("//h4[contains(text(),\"Enter roles to configure same data\")]")).getText().equals("Enter roles to configure same data")){
                     driver.findElement(By.id("skipButtonForRoles")).click();
+                    Thread.sleep(3000);
                     WebElement Ticket = driver.findElement(By.id("ticketNumber"));
                     Ticket.clear();
-                    Ticket.sendKeys(Tickets[i].trim());
+                    Ticket.sendKeys(Tickets[i]);
                     Thread.sleep(3000);
                     driver.findElement(By.id("clickSubmitButton")).click();
                     Thread.sleep(3000);
@@ -144,8 +146,15 @@ public class Application {
                         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
                         Thread.sleep(2000);
                     }
+                    else if(!(driver.findElements(By.xpath("//button[contains(text(),'OK')]")).get(1).getText().equals("OK")))
+                    {
+                      System.out.println("JSON May be Improper");
+                      continue;
+                    }
                     WebElement OK = driver.findElements(By.xpath("//button[contains(text(),'OK')]")).get(1);
                     ((JavascriptExecutor) driver).executeScript("arguments[0].click();", OK);
+                    Thread.sleep(2000);
+                  System.out.println(Jsons.get(m)+ "is loaded");
                 }
                 else
                   System.out.println(Jsons.get(m)+" is not loading in "+loadername);
