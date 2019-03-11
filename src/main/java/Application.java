@@ -201,14 +201,14 @@ public class Application {
           System.out.println("Alert seen");
           driver.switchTo().alert().accept();
         }
-        try {
-          wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("button.btn.btn-primary.btn-xs")));
-          WebElement Hide = driver.findElement(By.cssSelector("button.btn.btn-primary.btn-xs"));
-          ((JavascriptExecutor) driver).executeScript("arguments[0].click();", Hide);
-        } catch (TimeoutException e) {
-          System.out.println("Hide/show Button Not Found ");
         }
-        Thread.sleep(1000);
+      try {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("button.btn.btn-primary.btn-xs")));
+        WebElement Hide = driver.findElement(By.cssSelector("button.btn.btn-primary.btn-xs"));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", Hide);
+      }
+      catch (TimeoutException e) {
+        System.out.println("Hide/show Button Not Found ");
       }
     }
     driver.quit();
