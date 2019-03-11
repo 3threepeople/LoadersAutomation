@@ -10,8 +10,14 @@ import java.io.File;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.List;
+import org.apache.log4j.Logger;
+
 public class Application {
   public static void main(String[] args) throws IOException, InterruptedException {
+
+    Logger logger = Logger.getLogger(Application.class);
+    logger.info("Started application");
 
     RadioButton radioButton = new RadioButton();
     String PropertiesPath = System.getProperty("props.path");
@@ -31,11 +37,11 @@ public class Application {
     String[] Tickets = splittickets.split(",");
 
     if (ParentDirectories.length != splitloaders.length) {
-      System.out.println("The number of Directories and Loaders are not same...Please Check it:");
+      logger.error("The number of Directories and Loaders are not same");
       System.exit(0);
     }
     if (ParentDirectories.length != Tickets.length) {
-      System.out.println("The Number of Tickets is not equal to Number of Loaders");
+      logger.error("The Number of Tickets is not equal to Number of Loaders");
       System.exit(0);
     }
 
@@ -78,28 +84,29 @@ public class Application {
             Jsons.add(JsonFiles[k]);
         }
       } catch (NullPointerException e) {
-        System.out.println("JSONS not present in the given FilePath:" + ParentDirectories[i]);
+        logger.warn("JSONS not present in the given FilePath:" + ParentDirectories[i]);
         continue;
       }
 
       String radio = radioButton.getRadio(loadername);
       if (null != radio) {
         try {
+          logger.info("Processing loader: " + loadername);
           wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(radio)));
           WebElement radiofind = driver.findElement(By.id(radio));
           executor.executeScript("arguments[0].click();", radiofind);
         } catch (TimeoutException e) {
-          System.out.println("Cannot find the loader:" + loadername);
+          logger.warn("Cannot find the loader:" + loadername);
           continue;
         }
       }
       else {
-        System.out.println("This Loader is not present in our Configurations:" + loadername);
-        System.out.println(radioButton.Radio.keySet());
+        logger.warn("This Loader is not present in our Configurations:" + loadername);
         continue;
       }
 
       for (int m = 0; m < Jsons.size(); m++) {
+        logger.info("Processing Json: " + Jsons.get(m));
         String toloadpath = JsonDirectory + "/" + Jsons.get(m);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("file")));
         driver.findElement(By.name("file")).sendKeys(toloadpath);
@@ -133,7 +140,7 @@ public class Application {
                 WebElement OK = driver.findElements(By.xpath("//button[contains(text(),'OK')]"))
                     .get(1);
                 ((JavascriptExecutor) driver).executeScript("arguments[0].click();", OK);
-                System.out.println(Jsons.get(m) + " is loaded:"+ loadername);
+                logger.info(Jsons.get(m) + " is loaded: "+ loadername);
                 continue;
                   }
               wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
@@ -141,7 +148,7 @@ public class Application {
               WebElement OK = driver.findElements(By.xpath("//button[contains(text(),'OK')]"))
                   .get(1);
               ((JavascriptExecutor) driver).executeScript("arguments[0].click();", OK);
-              System.out.println(Jsons.get(m) + " is loaded in "+loadername);
+              logger.info(Jsons.get(m) + " is loaded in "+loadername);
               continue;
           }
           catch (TimeoutException e) {
@@ -154,7 +161,7 @@ public class Application {
                     "//h4[contains(text(),\"Redmine ticket number\")]")));
               }
               catch (TimeoutException e1) {
-                System.out.println("Current status JSON May be Improper");
+                logger.warn("Current status JSON May be Improper");
                 continue;
               }
               WebElement Ticket = driver.findElement(By.id("ticketNumber"));
@@ -166,7 +173,7 @@ public class Application {
                 driver.findElement(By.id("clickSubmitButton")).click();
               }
               catch (TimeoutException e2) {
-                System.out.println("Submit button not found of roles");
+                logger.warn("Submit button not found of roles");
                 continue;
               }
               try {
@@ -179,7 +186,7 @@ public class Application {
                 WebElement OK = driver.findElements(By.xpath("//button[contains(text(),'OK')]"))
                     .get(1);
                 ((JavascriptExecutor) driver).executeScript("arguments[0].click();", OK);
-                System.out.println(Jsons.get(m) + " is loaded in "+loadername);
+                logger.info(Jsons.get(m) + " is loaded in "+loadername);
                 continue;
               }
                 WebElement element = driver.findElement(By.xpath(
@@ -190,11 +197,11 @@ public class Application {
               WebElement OK = driver.findElements(By.xpath("//button[contains(text(),'OK')]"))
                   .get(1);
               ((JavascriptExecutor) driver).executeScript("arguments[0].click();", OK);
-              System.out.println(Jsons.get(m) + " is loaded");
+              logger.info(Jsons.get(m) + " is loaded in "+loadername);
               continue;
             }
             catch (TimeoutException e3) {
-              System.out.println("JSON is not loading " + Jsons.get(m));
+              logger.warn("JSON is not loading " + Jsons.get(m));
               continue;
             }
           }
@@ -211,7 +218,7 @@ public class Application {
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", Hide);
       }
       catch (TimeoutException e) {
-        System.out.println("Hide/show Button Not Found ");
+        logger.error("Hide/show Button Not Found ");
       }
     }
     driver.quit();
