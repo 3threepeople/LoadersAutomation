@@ -128,19 +128,21 @@ public class Application {
                   ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
                   }
               catch (TimeoutException e1) {
-                wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
+                wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
                     "//h4[contains(text(),\"Successfully configured\")]")));
                 WebElement OK = driver.findElements(By.xpath("//button[contains(text(),'OK')]"))
                     .get(1);
                 ((JavascriptExecutor) driver).executeScript("arguments[0].click();", OK);
-                System.out.println(Jsons.get(m) + " is loaded");
+                System.out.println(Jsons.get(m) + " is loaded:"+ loadername);
+                continue;
                   }
-              wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
+              wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
                   "//h4[contains(text(),\"Successfully configured\")]")));
               WebElement OK = driver.findElements(By.xpath("//button[contains(text(),'OK')]"))
                   .get(1);
               ((JavascriptExecutor) driver).executeScript("arguments[0].click();", OK);
               System.out.println(Jsons.get(m) + " is loaded in "+loadername);
+              continue;
           }
           catch (TimeoutException e) {
             try {
@@ -172,7 +174,7 @@ public class Application {
                     "//h4[contains(text(),\"Data already exists. Do you want to overwrite?\")]")));
               }
               catch (TimeoutException e3) {
-                wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
+                wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
                     "//h4[contains(text(),\"Successfully configured\")]")));
                 WebElement OK = driver.findElements(By.xpath("//button[contains(text(),'OK')]"))
                     .get(1);
@@ -183,12 +185,13 @@ public class Application {
                 WebElement element = driver.findElement(By.xpath(
                     "//button[contains(text(),'YES')]"));
                 ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
-              wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
+              wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
                   "//h4[contains(text(),\"Successfully configured\")]")));
               WebElement OK = driver.findElements(By.xpath("//button[contains(text(),'OK')]"))
                   .get(1);
               ((JavascriptExecutor) driver).executeScript("arguments[0].click();", OK);
               System.out.println(Jsons.get(m) + " is loaded");
+              continue;
             }
             catch (TimeoutException e3) {
               System.out.println("JSON is not loading " + Jsons.get(m));
