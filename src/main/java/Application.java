@@ -1,12 +1,11 @@
 import Models.RadioButton;
-import java.util.NoSuchElementException;
+import Models.Stats;
+import com.google.common.base.Stopwatch;
+import java.io.*;
 import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.*;
-import java.io.File;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -17,7 +16,14 @@ public class Application {
   public static void main(String[] args) throws IOException, InterruptedException {
 
     Logger logger = Logger.getLogger(Application.class);
+    Stopwatch stopwatch=Stopwatch.createUnstarted();
     logger.info("Started application");
+    Integer TotalJsons=0;
+    Integer InvalidJsons=0;
+    Integer OverridedJsons=0;
+    Integer ValidJsons=0;
+
+
 
     RadioButton radioButton = new RadioButton();
     String PropertiesPath = System.getProperty("props.path");
@@ -45,6 +51,7 @@ public class Application {
       System.exit(0);
     }
 
+    stopwatch.start();
     String ChromeDriverPath = System.getProperty("chromedriver.path");
     System.setProperty("webdriver.chrome.driver", ChromeDriverPath);
     WebDriver driver = new ChromeDriver();
@@ -141,6 +148,8 @@ public class Application {
                     .get(1);
                 ((JavascriptExecutor) driver).executeScript("arguments[0].click();", OK);
                 logger.info(Jsons.get(m) + " is loaded: "+ loadername);
+                TotalJsons++;
+                ValidJsons++;
                 continue;
                   }
               wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
@@ -149,33 +158,40 @@ public class Application {
                   .get(1);
               ((JavascriptExecutor) driver).executeScript("arguments[0].click();", OK);
               logger.info(Jsons.get(m) + " is loaded in "+loadername);
+              TotalJsons++;
+              OverridedJsons++;
               continue;
           }
           catch (TimeoutException e) {
             try {
               wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
                   "//h4[contains(text(),\"Enter roles to configure same data\")]")));
+              File TextFile= new File(JsonDirectory+"/"+Jsons.get(m).replace(".json",".txt"));
+              if(TextFile.exists()) {
+                BufferedReader br = new BufferedReader(new FileReader(TextFile));
+                String roles = "";
+                roles = br.readLine();
+                WebElement SubmitRoles = driver.findElement(By.id("rolesList"));
+                SubmitRoles.clear();
+                SubmitRoles.sendKeys(roles);
+              }
               driver.findElement(By.id("skipButtonForRoles")).click();
               try {
                 wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
                     "//h4[contains(text(),\"Redmine ticket number\")]")));
               }
               catch (TimeoutException e1) {
-                logger.warn("Current status JSON May be Improper");
+                logger.warn("JSON May be Improper");
+                TotalJsons++;
+                InvalidJsons++;
                 continue;
               }
               WebElement Ticket = driver.findElement(By.id("ticketNumber"));
               Ticket.clear();
               Ticket.sendKeys(Tickets[i]);
-              try {
                 wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(
                     "clickSubmitButton")));
                 driver.findElement(By.id("clickSubmitButton")).click();
-              }
-              catch (TimeoutException e2) {
-                logger.warn("Submit button not found of roles");
-                continue;
-              }
               try {
                 wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
                     "//h4[contains(text(),\"Data already exists. Do you want to overwrite?\")]")));
@@ -187,6 +203,8 @@ public class Application {
                     .get(1);
                 ((JavascriptExecutor) driver).executeScript("arguments[0].click();", OK);
                 logger.info(Jsons.get(m) + " is loaded in "+loadername);
+                ValidJsons++;
+                TotalJsons++;
                 continue;
               }
                 WebElement element = driver.findElement(By.xpath(
@@ -198,17 +216,23 @@ public class Application {
                   .get(1);
               ((JavascriptExecutor) driver).executeScript("arguments[0].click();", OK);
               logger.info(Jsons.get(m) + " is loaded in "+loadername);
+              OverridedJsons++;
+              ValidJsons++;
               continue;
             }
             catch (TimeoutException e3) {
               logger.warn("JSON is not loading " + Jsons.get(m));
+              TotalJsons++;
+              InvalidJsons++;
               continue;
             }
           }
         }
         catch (UnhandledAlertException e)
         {
-          System.out.println("Alert seen");
+          logger.warn("Alert Seen");
+          TotalJsons++;
+          InvalidJsons++;
           driver.switchTo().alert().accept();
         }
         }
@@ -221,6 +245,12 @@ public class Application {
         logger.error("Hide/show Button Not Found ");
       }
     }
+    stopwatch.stop();
+    logger.info(Stats.TOTALJSONS+":"+TotalJsons);
+    logger.info(Stats.VALIDJSONS+":"+ValidJsons);
+    logger.info(Stats.OVERRIDEDJSONS+":"+OverridedJsons);
+    logger.info(Stats.INVALIDJSONS+":"+InvalidJsons);
+    logger.info(Stats.TOTALTIMETAKEN+":"+stopwatch.elapsed(TimeUnit.SECONDS)+" secs");
     driver.quit();
   }
 }
