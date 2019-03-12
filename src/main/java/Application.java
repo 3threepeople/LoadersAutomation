@@ -23,8 +23,6 @@ public class Application {
     Integer OverridedJsons=0;
     Integer ValidJsons=0;
 
-
-
     RadioButton radioButton = new RadioButton();
     String PropertiesPath = System.getProperty("props.path");
     Scanner key = new Scanner(System.in);
