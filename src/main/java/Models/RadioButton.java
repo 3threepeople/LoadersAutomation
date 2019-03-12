@@ -25,9 +25,9 @@ public class RadioButton {
         Radio.put("campaign_content - Current Status", "campaign_content_current_status");
         Radio.put("campaign_content - Health Quest", "campaign_content_health_quest");
         Radio.put("campaign_content - Plan choice", "campaign_content_plan_choice");
-        Radio.put("campaign_content - Plan choice nearby", "plan_optional_content");
-        Radio.put("campaign_content - Plan option content", "campaign_content_generic");
-        Radio.put("campaign_content- generic", "gameday_client_config");
+        Radio.put("campaign_content - Plan choice nearby", "plan_choice_nearby");
+        Radio.put("campaign_content - Plan option content", "plan_optional_content");
+        Radio.put("campaign_content- generic", "campaign_content_generic");
         Radio.put("Blacklist Data", "bm_blacklisted_data");
         Radio.put("Details Page Content", "bm_details_page");
         Radio.put("Dropdown Custom Tags Content", "bm_dropdown_content");
