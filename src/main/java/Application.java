@@ -52,7 +52,6 @@ public class Application {
       File f = new File(JsonDirectory);
       String JsonFiles[] = f.list();
       List<String> Jsons = new ArrayList<String>();
-
       Jsons = getListofJsons(JsonFiles, Jsons);
       if (Jsons == null || Jsons.isEmpty()) {
         logger.warn("JSONS not present in the given FilePath:" + ParentDirectories[i]);
@@ -61,7 +60,6 @@ public class Application {
       String radio = radioButton.getRadio(loadername);
       if (!(ClickLoader(radio, loadername, driver, wait, executor, logger)))
         continue;
-
       for (int m = 0; m < Jsons.size(); m++) {
         logger.info("Processing Json: " + Jsons.get(m));
         UploadJson(driver,wait,JsonDirectory,Jsons.get(m));
@@ -78,7 +76,7 @@ public class Application {
             ValidJsons++;
             continue;
           }
-        } else if (IsSubmitRolesPopUp(driver, wait, JsonDirectory, Jsons.get(m), logger)) {
+        } else if(IsSubmitRolesPopUp(driver, wait, JsonDirectory, Jsons.get(m), logger)) {
           if (IsOverRidePopUp(driver, wait, logger)) {
             ClickSuccessfullyConfigured(driver, wait, logger, Jsons.get(m), loadername);
             TotalJsons++;

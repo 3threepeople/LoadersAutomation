@@ -56,7 +56,7 @@ public class Utility {
                                     JavascriptExecutor executor,
                                     Logger logger) {
     if (null != radio) {
-      logger.info("Processing loader: " + loadername);
+      logger.info("Processing Loader: " + loadername);
       if (!(SelectLoader(radio, driver, wait, executor))) {
         logger.warn("Cannot find the loader:" + loadername);
         return false;
