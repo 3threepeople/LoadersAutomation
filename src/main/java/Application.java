@@ -48,14 +48,13 @@ public class Application {
       System.exit(0);
     }
 
-    stopwatch.start();
     String ChromeDriverPath = System.getProperty("chromedriver.path");
     System.setProperty("webdriver.chrome.driver", ChromeDriverPath);
     WebDriver driver = new ChromeDriver();
     driver.manage().window().fullscreen();
     driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
     JavascriptExecutor executor = (JavascriptExecutor) driver;
-    WebDriverWait wait = new WebDriverWait(driver, 20);
+    WebDriverWait wait = new WebDriverWait(driver, 10);
 
     driver.get(Properties.getProperty("URL"));
     driver.findElement(By.name("username")).sendKeys(Properties.getProperty("username"));
@@ -74,6 +73,7 @@ public class Application {
     Thread.sleep(3000);
     driver.findElement(By.className("admin-item")).click();
     Thread.sleep(3000);
+    stopwatch.start();
 
     for (int i = 0; i < splitloaders.length; i++) {
       String loadername = splitloaders[i].trim();
@@ -214,7 +214,7 @@ public class Application {
               ((JavascriptExecutor) driver).executeScript("arguments[0].click();", OK);
               logger.info(Jsons.get(m) + " is loaded in "+loadername);
               OverridedJsons++;
-              ValidJsons++;
+              TotalJsons++;
               continue;
             }
             catch (TimeoutException e3) {
