@@ -13,21 +13,30 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 public class Application {
+  private static int TotalJsons=0;
+  private static int InvalidJsons=0;
+  private static int OverridedJsons=0;
+  private static int ValidJsons=0;
+
+  public static void increment(String JSON1,String JSON2)
+  {
+    if(JSON1.equals(Stats.TOTALJSONS))
+      TotalJsons++;
+    if(JSON2.equals(Stats.OVERRIDEDJSONS))
+      OverridedJsons++;
+    if(JSON2.equals(Stats.VALIDJSONS))
+      ValidJsons++;
+    if(JSON2.equals(Stats.INVALIDJSONS))
+      InvalidJsons++;
+  }
   public static void main(String[] args) throws IOException, InterruptedException {
 
     Logger logger = Logger.getLogger(Application.class);
     Stopwatch stopwatch=Stopwatch.createUnstarted();
     logger.info("Started application");
-    Integer TotalJsons=0;
-    Integer InvalidJsons=0;
-    Integer OverridedJsons=0;
-    Integer ValidJsons=0;
 
     RadioButton radioButton = new RadioButton();
-    String PropertiesPath = System.getProperty("props.path");
-    Properties Properties = new Properties();
-    FileInputStream fis = new FileInputStream(PropertiesPath);
-    Properties.load(fis);
+    Properties Properties=InitializeProperties();
 
     String[] Tickets = getTickets(Properties);
     String[] splitloaders=getLoaders(Properties);
@@ -60,42 +69,45 @@ public class Application {
       String radio = radioButton.getRadio(loadername);
       if (!(ClickLoader(radio, loadername, driver, wait, executor, logger)))
         continue;
-      for (int m = 0; m < Jsons.size(); m++) {
-        logger.info("Processing Json: " + Jsons.get(m));
-        UploadJson(driver,wait,JsonDirectory,Jsons.get(m));
+      for (String Json:Jsons) {
+        logger.info("Processing Json: " + Json);
+        UploadJson(driver,wait,JsonDirectory,Json);
         ClickLoadButton(driver, wait, executor);
         if (IsTicketPopUp(driver, wait, Tickets[i])) {
           if (IsOverRidePopUp(driver, wait, logger)) {
-            ClickSuccessfullyConfigured(driver, wait, logger, Jsons.get(m), loadername);
-            TotalJsons++;
-            OverridedJsons++;
-            continue;
-          } else {
-            ClickSuccessfullyConfigured(driver, wait, logger, Jsons.get(m), loadername);
-            TotalJsons++;
-            ValidJsons++;
+            ClickSuccessfullyConfigured(driver, wait, logger, Json, loadername);
+            increment(Stats.TOTALJSONS,Stats.OVERRIDEDJSONS);
             continue;
           }
-        } else if(IsSubmitRolesPopUp(driver, wait, JsonDirectory, Jsons.get(m), logger)) {
-          if (IsOverRidePopUp(driver, wait, logger)) {
-            ClickSuccessfullyConfigured(driver, wait, logger, Jsons.get(m), loadername);
-            TotalJsons++;
-            OverridedJsons++;
+          else {
+            ClickSuccessfullyConfigured(driver, wait, logger, Json, loadername);
+            increment(Stats.TOTALJSONS,Stats.VALIDJSONS);
             continue;
-          } else if (ClickSuccessfullyConfigured(driver, wait, logger, Jsons.get(m), loadername)) {
-            TotalJsons++;
-            ValidJsons++;
-            continue;
-          } else {
+          }
+        }
+        else if(IsSubmitRolesPopUp(driver, wait, JsonDirectory, Json, logger))
+        {
+          if (IsTicketPopUp(driver, wait, Tickets[i]))
+          {
+            if (IsOverRidePopUp(driver, wait, logger)) {
+              ClickSuccessfullyConfigured(driver, wait, logger, Json, loadername);
+              increment(Stats.TOTALJSONS, Stats.OVERRIDEDJSONS);
+              continue;
+            }
+            else {
+              ClickSuccessfullyConfigured(driver, wait, logger, Json, loadername);
+              increment(Stats.TOTALJSONS,Stats.VALIDJSONS);
+            }
+          }
+          else {
             logger.warn("JSON may be Improper");
-            TotalJsons++;
-            InvalidJsons++;
+            increment(Stats.TOTALJSONS,Stats.INVALIDJSONS);
             continue;
           }
-        } else {
-          logger.warn("JSON:" + Jsons.get(m) + " is not loading in " + loadername);
-          TotalJsons++;
-          InvalidJsons++;
+        }
+        else {
+          logger.warn("JSON:" + Json + " is not loading in " + loadername);
+          increment(Stats.TOTALJSONS,Stats.INVALIDJSONS);
           continue;
         }
       }

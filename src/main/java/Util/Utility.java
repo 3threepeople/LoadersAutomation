@@ -12,7 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class Utility {
 
-  public static void submitTicket(WebElement webElement,
+  private static void submitTicket(WebElement webElement,
                                   WebDriver webDriver,
                                   String tickeknumber,
                                   WebDriverWait wait) {
@@ -23,7 +23,7 @@ public class Utility {
     webDriver.findElement(By.id("clickSubmitButton")).click();
   }
 
-  public static boolean SelectLoader(String radio,
+  private static boolean SelectLoader(String radio,
                                      WebDriver driver,
                                      WebDriverWait wait,
                                      JavascriptExecutor executor) {
@@ -39,9 +39,9 @@ public class Utility {
 
   public static List<String> getListofJsons(String[] JsonFiles, List<String> Jsons) {
     try {
-      for (int k = 0; k < JsonFiles.length; k++) {
-        if (JsonFiles[k].endsWith(".json"))
-          Jsons.add(JsonFiles[k]);
+      for (String JsonFile:JsonFiles) {
+        if (JsonFile.endsWith(".json"))
+          Jsons.add(JsonFile);
       }
       return Jsons;
     } catch (NullPointerException e) {
@@ -141,8 +141,7 @@ public class Utility {
       File TextFile = new File(JsonDirectory + "/" + Json.replace(".json", ".txt"));
       if (TextFile.exists()) {
         BufferedReader br = new BufferedReader(new FileReader(TextFile));
-        String roles = "";
-        roles = br.readLine();
+        String roles = br.readLine();
         WebElement SubmitRoles = driver.findElement(By.id("rolesList"));
         SubmitRoles.clear();
         SubmitRoles.sendKeys(roles);
@@ -183,4 +182,6 @@ public class Utility {
     wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("file")));
     driver.findElement(By.name("file")).sendKeys(toloadpath);
   }
+
+
 }

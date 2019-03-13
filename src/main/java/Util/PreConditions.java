@@ -1,5 +1,7 @@
 package Util;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -10,6 +12,14 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 public class PreConditions {
 
+  public static Properties InitializeProperties() throws IOException
+  {
+    String PropertiesPath = System.getProperty("props.path");
+    Properties Properties = new Properties();
+    FileInputStream fis = new FileInputStream(PropertiesPath);
+    Properties.load(fis);
+    return Properties;
+  }
   public static void NavigateConfigurations(WebDriver driver) throws InterruptedException {
     driver.findElement(By.cssSelector("button.button")).click();
     Thread.sleep(2000);
@@ -40,22 +50,19 @@ public class PreConditions {
   public static String[] getTickets(Properties properties)
   {
     String splittickets = properties.getProperty("Tickets");
-    String[] Tickets = splittickets.split(",");
-    return Tickets;
+    return splittickets.split(",");
   }
 
   public static String[] getLoaders(Properties properties)
   {
     String loaders = properties.getProperty("loaders");
-    String[] splitloaders = loaders.split(",");
-    return splitloaders;
+    return loaders.split(",");
   }
 
   public static String[] getParentDirectories(Properties properties)
   {
     String jsonpath = properties.getProperty("jsonpath");
-    String[] ParentDirectories = jsonpath.split(",");
-    return ParentDirectories;
+    return jsonpath.split(",");
   }
 
   public static void OpenURLandLogin(Properties properties,WebDriver driver)
