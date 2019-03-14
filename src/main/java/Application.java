@@ -32,9 +32,9 @@ public class Application {
   public static void main(String[] args) throws IOException, InterruptedException {
 
     Logger logger = Logger.getLogger(Application.class);
-    Stopwatch stopwatch=Stopwatch.createUnstarted();
     logger.info("Started application");
 
+    Stopwatch stopwatch=Stopwatch.createUnstarted();
     RadioButton radioButton = new RadioButton();
     Properties Properties=InitializeProperties();
 
