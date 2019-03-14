@@ -1,8 +1,8 @@
 import static Util.PreConditions.*;
 import static Util.Utility.*;
+import static Models.Stats.*;
 
 import Models.RadioButton;
-import Models.Stats;
 import com.google.common.base.Stopwatch;
 import java.io.*;
 import java.util.concurrent.TimeUnit;
@@ -20,13 +20,13 @@ public class Application {
 
   public static void increment(String JSON1,String JSON2)
   {
-    if(JSON1.equals(Stats.TOTALJSONS))
+    if(JSON1.equals(TOTALJSONS))
       TotalJsons++;
-    if(JSON2.equals(Stats.OVERRIDEDJSONS))
+    if(JSON2.equals(OVERRIDEDJSONS))
       OverridedJsons++;
-    if(JSON2.equals(Stats.VALIDJSONS))
+    if(JSON2.equals(VALIDJSONS))
       ValidJsons++;
-    if(JSON2.equals(Stats.INVALIDJSONS))
+    if(JSON2.equals(INVALIDJSONS))
       InvalidJsons++;
   }
   public static void main(String[] args) throws IOException, InterruptedException {
@@ -73,15 +73,16 @@ public class Application {
         logger.info("Processing Json: " + Json);
         UploadJson(driver,wait,JsonDirectory,Json);
         ClickLoadButton(driver, wait, executor);
+
         if (IsTicketPopUp(driver, wait, Tickets[i])) {
           if (IsOverRidePopUp(driver, wait, logger)) {
             ClickSuccessfullyConfigured(driver, wait, logger, Json, loadername);
-            increment(Stats.TOTALJSONS,Stats.OVERRIDEDJSONS);
+            increment(TOTALJSONS,OVERRIDEDJSONS);
             continue;
           }
           else {
             ClickSuccessfullyConfigured(driver, wait, logger, Json, loadername);
-            increment(Stats.TOTALJSONS,Stats.VALIDJSONS);
+            increment(TOTALJSONS,VALIDJSONS);
             continue;
           }
         }
@@ -91,34 +92,34 @@ public class Application {
           {
             if (IsOverRidePopUp(driver, wait, logger)) {
               ClickSuccessfullyConfigured(driver, wait, logger, Json, loadername);
-              increment(Stats.TOTALJSONS, Stats.OVERRIDEDJSONS);
+              increment(TOTALJSONS,OVERRIDEDJSONS);
               continue;
             }
             else {
               ClickSuccessfullyConfigured(driver, wait, logger, Json, loadername);
-              increment(Stats.TOTALJSONS,Stats.VALIDJSONS);
+              increment(TOTALJSONS,VALIDJSONS);
             }
           }
           else {
             logger.warn("JSON may be Improper");
-            increment(Stats.TOTALJSONS,Stats.INVALIDJSONS);
+            increment(TOTALJSONS,INVALIDJSONS);
             continue;
           }
         }
         else {
           logger.warn("JSON:" + Json + " is not loading in " + loadername);
-          increment(Stats.TOTALJSONS,Stats.INVALIDJSONS);
+          increment(TOTALJSONS,INVALIDJSONS);
           continue;
         }
       }
       ClickHide(driver,wait,logger);
     }
       stopwatch.stop();
-      logger.info(Stats.TOTALJSONS+":"+TotalJsons);
-      logger.info(Stats.VALIDJSONS+":"+ValidJsons);
-      logger.info(Stats.OVERRIDEDJSONS+":"+OverridedJsons);
-      logger.info(Stats.INVALIDJSONS+":"+InvalidJsons);
-      logger.info(Stats.TOTALTIMETAKEN+":"+stopwatch.elapsed(TimeUnit.SECONDS)+" secs");
+      logger.info(TOTALJSONS+":"+TotalJsons);
+      logger.info(VALIDJSONS+":"+ValidJsons);
+      logger.info(OVERRIDEDJSONS+":"+OverridedJsons);
+      logger.info(INVALIDJSONS+":"+InvalidJsons);
+      logger.info(TOTALTIMETAKEN+":"+stopwatch.elapsed(TimeUnit.SECONDS)+" secs");
       driver.quit();
   }
 }
