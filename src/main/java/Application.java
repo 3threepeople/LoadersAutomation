@@ -50,7 +50,6 @@ public class Application {
     WebDriverWait wait = new WebDriverWait(driver, 10);
 
     OpenURLandLogin(Properties,driver);
-    Thread.sleep(2000);
     SendOTP(driver);
     NavigateConfigurations(driver);
     stopwatch.start();
