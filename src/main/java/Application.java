@@ -18,7 +18,7 @@ public class Application {
   private static int OverridedJsons=0;
   private static int ValidJsons=0;
 
-  public static void increment(String JSON1,String JSON2)
+  private static void increment(String JSON1,String JSON2)
   {
     if(JSON1.equals(TOTALJSONS))
       TotalJsons++;
@@ -61,7 +61,7 @@ public class Application {
       String JsonFiles[] = f.list();
       List<String> Jsons = new ArrayList<String>();
       Jsons = getListofJsons(JsonFiles, Jsons);
-      if (Jsons == null || Jsons.isEmpty()) {
+      if (null==Jsons || Jsons.isEmpty()) {
         logger.warn("JSONS not present in the given FilePath:" + ParentDirectories[i]);
         continue;
       }
@@ -77,12 +77,10 @@ public class Application {
           if (IsOverRidePopUp(driver, wait, logger)) {
             ClickSuccessfullyConfigured(driver, wait, logger, Json, loadername);
             increment(TOTALJSONS,OVERRIDEDJSONS);
-            continue;
           }
           else {
             ClickSuccessfullyConfigured(driver, wait, logger, Json, loadername);
             increment(TOTALJSONS,VALIDJSONS);
-            continue;
           }
         }
         else if(IsSubmitRolesPopUp(driver, wait, JsonDirectory, Json, logger))
@@ -92,7 +90,6 @@ public class Application {
             if (IsOverRidePopUp(driver, wait, logger)) {
               ClickSuccessfullyConfigured(driver, wait, logger, Json, loadername);
               increment(TOTALJSONS,OVERRIDEDJSONS);
-              continue;
             }
             else {
               ClickSuccessfullyConfigured(driver, wait, logger, Json, loadername);
@@ -102,13 +99,11 @@ public class Application {
           else {
             logger.warn("JSON may be Improper");
             increment(TOTALJSONS,INVALIDJSONS);
-            continue;
           }
         }
         else {
           logger.warn("JSON:" + Json + " is not loading in " + loadername);
           increment(TOTALJSONS,INVALIDJSONS);
-          continue;
         }
       }
     }

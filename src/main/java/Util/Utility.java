@@ -28,7 +28,7 @@ public class Utility {
                                      WebDriver driver,
                                      WebDriverWait wait,
                                      JavascriptExecutor executor) {
-    if(activedropdowntext(driver,wait)==null || (!activedropdowntext(driver,wait).equals(category))) {
+    if(null==activedropdowntext(driver,wait) || (!activedropdowntext(driver,wait).equals(category))) {
       if(category.equals("ETL's"))
       {
         wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[contains(text(),\"ETL's\")]")));
@@ -182,7 +182,7 @@ public class Utility {
     driver.findElement(By.name("file")).sendKeys(toloadpath);
   }
 
-  public static String activedropdowntext(WebDriver driver,WebDriverWait wait) {
+  private static String activedropdowntext(WebDriver driver,WebDriverWait wait) {
     try {
       wait.until(ExpectedConditions.numberOfElementsToBe(By.className("active"),2));
       return driver.findElements(By.className("active")).get(1).getText().split("\n")[0];
