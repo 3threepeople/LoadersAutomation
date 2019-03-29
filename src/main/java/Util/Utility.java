@@ -38,7 +38,7 @@ public class Utility {
       else{
         wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[contains(text(),'"+category+"')]")));
         WebElement ClickCategory=driver.findElement(By.xpath("//span[contains(text(),'"+category+"')]"));
-        executor.executeScript("arguments[0].click();", ClickCategory); ////category click
+        executor.executeScript("arguments[0].click();", ClickCategory);
       }
 
     }
@@ -47,7 +47,7 @@ public class Utility {
       WebElement selectloader= driver.findElement(By.xpath("//a[contains(text(),'"+loadername+"')]"));
       executor.executeScript("arguments[0].click();", selectloader);
       return true;
-    } catch (TimeoutException e) {   //loader click
+    } catch (TimeoutException e) {
       return false;
     }
   }
@@ -171,21 +171,6 @@ public class Utility {
     {
       logger.warn("Alert Seen");
       driver.switchTo().alert().accept();
-      return false;
-    }
-  }
-
-  public static Boolean ClickHide(WebDriver driver,WebDriverWait wait,Logger logger)
-  {
-    try {
-      wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(
-          "button.btn.btn-primary.btn-xs")));
-      WebElement Hide = driver.findElement(By.cssSelector("button.btn.btn-primary.btn-xs"));
-      ((JavascriptExecutor) driver).executeScript("arguments[0].click();", Hide);
-      return true;
-    }
-    catch (TimeoutException e) {
-      logger.error("Hide/show Button Not Found ");
       return false;
     }
   }
