@@ -23,16 +23,31 @@ public class Utility {
     webDriver.findElement(By.id("clickSubmitButton")).click();
   }
 
-  private static boolean SelectLoader(String radio,
+  private static boolean SelectLoader(String category,
+                                     String loadername,
                                      WebDriver driver,
                                      WebDriverWait wait,
                                      JavascriptExecutor executor) {
+    if(activedropdowntext(driver,wait)==null || (!activedropdowntext(driver,wait).equals(category))) {
+      if(category.equals("ETL's"))
+      {
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[contains(text(),\"ETL's\")]")));
+        WebElement ETL=driver.findElement(By.xpath("//span[contains(text(),\"ETL's\")]"));
+        executor.executeScript("arguments[0].click();", ETL);
+      }
+      else{
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[contains(text(),'"+category+"')]")));
+        WebElement ClickCategory=driver.findElement(By.xpath("//span[contains(text(),'"+category+"')]"));
+        executor.executeScript("arguments[0].click();", ClickCategory); ////category click
+      }
+
+    }
     try {
-      wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(radio)));
-      WebElement radiofind = driver.findElement(By.id(radio));
-      executor.executeScript("arguments[0].click();", radiofind);
+      wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[contains(text(),'"+loadername+"')]")));
+      WebElement selectloader= driver.findElement(By.xpath("//a[contains(text(),'"+loadername+"')]"));
+      executor.executeScript("arguments[0].click();", selectloader);
       return true;
-    } catch (TimeoutException e) {
+    } catch (TimeoutException e) {   //loader click
       return false;
     }
   }
@@ -49,15 +64,15 @@ public class Utility {
     }
   }
 
-  public static Boolean ClickLoader(String radio,
+  public static Boolean ClickLoader(String category,
                                     String loadername,
                                     WebDriver driver,
                                     WebDriverWait wait,
                                     JavascriptExecutor executor,
                                     Logger logger) {
-    if (null != radio) {
+    if (null != category) {
       logger.info("Processing Loader: " + loadername);
-      if (!(SelectLoader(radio, driver, wait, executor))) {
+      if (!(SelectLoader(category, loadername,driver, wait, executor))) {
         logger.warn("Cannot find the loader:" + loadername);
         return false;
       }
@@ -80,7 +95,7 @@ public class Utility {
   public static Boolean IsTicketPopUp(WebDriver driver, WebDriverWait wait, String TicketNumber) {
     try {
       wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
-          "//h4[contains(text(),\"Redmine ticket number\")]")));
+          "//h4[contains(text(),\"Jira ticket number\")]")));
       WebElement Ticket = driver.findElement(By.id("ticketNumber"));
       submitTicket(Ticket, driver, TicketNumber, wait);
       return true;
@@ -115,11 +130,10 @@ public class Utility {
                                                     String loadername) {
     try {
       wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
-          "//h4[contains(text(),\"Successfully configured\")]")));
-      WebElement OK = driver.findElements(By.xpath("//button[contains(text(),'OK')]"))
-          .get(1);
-      ((JavascriptExecutor) driver).executeScript("arguments[0].click();", OK);
-      logger.info(Json + " is loaded: " + loadername);
+          "//h4[contains(text(),\"Successfully configured!\")]")));
+      List<WebElement> Oks= driver.findElements(By.xpath("//button[contains(text(),'OK')]"));
+      wait.until(ExpectedConditions.elementToBeClickable(Oks.get(1)));
+      ((JavascriptExecutor) driver).executeScript("arguments[0].click();", Oks.get(1));
       return true;
     }
     catch (TimeoutException e) {
@@ -183,5 +197,12 @@ public class Utility {
     driver.findElement(By.name("file")).sendKeys(toloadpath);
   }
 
-
+  public static String activedropdowntext(WebDriver driver,WebDriverWait wait) {
+    try {
+      wait.until(ExpectedConditions.numberOfElementsToBe(By.className("active"),2));
+      return driver.findElements(By.className("active")).get(1).getText().split("\n")[0];
+    } catch (TimeoutException e) {
+      return null;
+    }
+  }
 }

@@ -2,12 +2,14 @@ import static Util.PreConditions.*;
 import static Util.Utility.*;
 import static Models.Stats.*;
 
-import Models.RadioButton;
+import Models.LoaderCategory;
 import com.google.common.base.Stopwatch;
 import java.io.*;
 import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.*;
 import java.util.*;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.List;
 import org.apache.log4j.Logger;
@@ -35,7 +37,7 @@ public class Application {
     logger.info("Started application");
 
     Stopwatch stopwatch=Stopwatch.createUnstarted();
-    RadioButton radioButton = new RadioButton();
+    LoaderCategory loaderCategory=new LoaderCategory();
     Properties Properties=InitializeProperties();
 
     String[] Tickets = getTickets(Properties);
@@ -54,6 +56,7 @@ public class Application {
     NavigateConfigurations(driver);
     stopwatch.start();
 
+    String ETL="ETL's";
     for (int i = 0; i < splitloaders.length; i++) {
       String loadername = splitloaders[i].trim();
       String JsonDirectory = ParentDirectories[i].trim();
@@ -65,8 +68,8 @@ public class Application {
         logger.warn("JSONS not present in the given FilePath:" + ParentDirectories[i]);
         continue;
       }
-      String radio = radioButton.getRadio(loadername);
-      if (!(ClickLoader(radio, loadername, driver, wait, executor, logger)))
+      String category = loaderCategory.getCategory(loadername);
+      if (!(ClickLoader(category, loadername, driver, wait, executor, logger)))
         continue;
       for (String Json:Jsons) {
         logger.info("Processing Json: " + Json);
@@ -111,7 +114,6 @@ public class Application {
           continue;
         }
       }
-      ClickHide(driver,wait,logger);
     }
       stopwatch.stop();
       logger.info(TOTALJSONS+":"+TotalJsons);
