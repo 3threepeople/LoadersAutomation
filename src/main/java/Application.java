@@ -51,7 +51,7 @@ public class Application {
 
     OpenURLandLogin(Properties,driver);
     SendOTP(driver);
-    NavigateConfigurations(driver);
+    NavigateConfigurations(driver,executor);
     stopwatch.start();
 
     for (int i = 0; i < splitloaders.length; i++) {

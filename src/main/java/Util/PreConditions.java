@@ -7,7 +7,9 @@ import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 public class PreConditions {
@@ -20,13 +22,10 @@ public class PreConditions {
     Properties.load(fis);
     return Properties;
   }
-  public static void NavigateConfigurations(WebDriver driver) throws InterruptedException {
-    driver.findElement(By.cssSelector("button.button")).click();
-    Thread.sleep(2000);
+  public static void NavigateConfigurations(WebDriver driver, JavascriptExecutor executor) throws InterruptedException {
     driver.findElement(By.className("fi-page-edit")).click();
-    Thread.sleep(3000);
-    driver.findElement(By.className("admin-item")).click();
-    Thread.sleep(3000);
+    WebElement Configurations=driver.findElement(By.xpath("//p[contains(text(),\"Configurations\")]"));
+    executor.executeScript("arguments[0].click();", Configurations);
   }
 
   public static void SendOTP(WebDriver driver)
@@ -35,6 +34,8 @@ public class PreConditions {
     System.out.println("Enter OTP:");
     String otp = key.nextLine();
     driver.findElement(By.name("htmlKey")).sendKeys(otp);
+    driver.findElement(By.cssSelector("button.button")).click();
+
   }
 
   public static WebDriver InitializeDriver()
