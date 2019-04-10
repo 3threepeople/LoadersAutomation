@@ -66,7 +66,7 @@ public class Application {
         continue;
       }
       String category = loaderCategory.getCategory(loadername);
-      if (!(ClickLoader(category, loadername, driver, wait, executor, logger)))
+      if (!(ClickLoader(category, loadername, driver, wait, executor)))
         continue;
       for (String Json:Jsons) {
         logger.info("Processing Json: " + Json);
@@ -74,25 +74,25 @@ public class Application {
         ClickLoadButton(driver, wait, executor);
 
         if (IsTicketPopUp(driver, wait, Tickets[i])) {
-          if (IsOverRidePopUp(driver, wait, logger)) {
-            ClickSuccessfullyConfigured(driver, wait, logger, Json, loadername);
+          if (IsOverRidePopUp(driver, wait)) {
+            ClickSuccessfullyConfigured(driver, wait, Json, loadername);
             increment(TOTALJSONS,OVERRIDEDJSONS);
           }
           else {
-            ClickSuccessfullyConfigured(driver, wait, logger, Json, loadername);
+            ClickSuccessfullyConfigured(driver, wait, Json, loadername);
             increment(TOTALJSONS,VALIDJSONS);
           }
         }
-        else if(IsSubmitRolesPopUp(driver, wait, JsonDirectory, Json, logger))
+        else if(IsSubmitRolesPopUp(driver, wait, JsonDirectory, Json))
         {
           if (IsTicketPopUp(driver, wait, Tickets[i]))
           {
-            if (IsOverRidePopUp(driver, wait, logger)) {
-              ClickSuccessfullyConfigured(driver, wait, logger, Json, loadername);
+            if (IsOverRidePopUp(driver, wait)) {
+              ClickSuccessfullyConfigured(driver, wait, Json, loadername);
               increment(TOTALJSONS,OVERRIDEDJSONS);
             }
             else {
-              ClickSuccessfullyConfigured(driver, wait, logger, Json, loadername);
+              ClickSuccessfullyConfigured(driver, wait, Json, loadername);
               increment(TOTALJSONS,VALIDJSONS);
             }
           }

@@ -12,6 +12,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class Utility {
 
+  static Logger logger=Logger.getLogger(Utility.class);
+
   private static void submitTicket(WebElement webElement,
                                   WebDriver webDriver,
                                   String tickeknumber,
@@ -29,12 +31,12 @@ public class Utility {
                                      WebDriverWait wait,
                                      JavascriptExecutor executor) {
     if(null==activedropdowntext(driver,wait) || (!activedropdowntext(driver,wait).equals(category))) {
-      if(category.equals("ETL's"))
-      {
+      if(category.equals("ETL's")) {
         wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[contains(text(),\"ETL's\")]")));
         WebElement ETL=driver.findElement(By.xpath("//span[contains(text(),\"ETL's\")]"));
         executor.executeScript("arguments[0].click();", ETL);
       }
+
       else{
         wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[contains(text(),'"+category+"')]")));
         WebElement ClickCategory=driver.findElement(By.xpath("//span[contains(text(),'"+category+"')]"));
@@ -68,8 +70,7 @@ public class Utility {
                                     String loadername,
                                     WebDriver driver,
                                     WebDriverWait wait,
-                                    JavascriptExecutor executor,
-                                    Logger logger) {
+                                    JavascriptExecutor executor) {
     if (null != category) {
       logger.info("Processing Loader: " + loadername);
       if (!(SelectLoader(category, loadername,driver, wait, executor))) {
@@ -104,7 +105,7 @@ public class Utility {
     }
   }
 
-  public static Boolean IsOverRidePopUp(WebDriver driver, WebDriverWait wait,Logger logger) {
+  public static Boolean IsOverRidePopUp(WebDriver driver, WebDriverWait wait) {
     try {
       wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
           "//h4[contains(text(),\"Data already exists. Do you want to overwrite?\")]")));
@@ -125,7 +126,6 @@ public class Utility {
 
   public static Boolean ClickSuccessfullyConfigured(WebDriver driver,
                                                     WebDriverWait wait,
-                                                    Logger logger,
                                                     String Json,
                                                     String loadername) {
     try {
@@ -148,7 +148,7 @@ public class Utility {
     }
   }
 
-  public static Boolean IsSubmitRolesPopUp(WebDriver driver,WebDriverWait wait,String JsonDirectory,String Json,Logger logger)
+  public static Boolean IsSubmitRolesPopUp(WebDriver driver,WebDriverWait wait,String JsonDirectory,String Json)
   throws IOException{
     try {
       wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
