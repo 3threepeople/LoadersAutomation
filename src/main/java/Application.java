@@ -36,20 +36,20 @@ public class Application {
 
     Stopwatch stopwatch=Stopwatch.createUnstarted();
     LoaderCategory loaderCategory=new LoaderCategory();
-    Properties Properties=InitializeProperties();
+    Properties properties=InitializeProperties();
 
-    String[] Tickets = getTickets(Properties);
-    String[] splitloaders=getLoaders(Properties);
-    String[] ParentDirectories=getParentDirectories(Properties);
+    String[] Tickets = getTickets(properties);
+    String[] splitloaders=getLoaders(properties);
+    String[] ParentDirectories=getParentDirectories(properties);
 
     if(!EligibletoContinue(ParentDirectories,splitloaders,Tickets,logger))
     System.exit(0);
 
-    WebDriver driver=InitializeDriver();
+    WebDriver driver=InitializeDriver(properties);
     JavascriptExecutor executor = (JavascriptExecutor) driver;
     WebDriverWait wait = new WebDriverWait(driver, 10);
 
-    OpenURLandLogin(Properties,driver);
+    OpenURLandLogin(properties,driver);
     SendOTP(driver);
     NavigateConfigurations(driver,executor);
     stopwatch.start();

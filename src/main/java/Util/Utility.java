@@ -117,7 +117,7 @@ public class Utility {
     }
     catch (UnhandledAlertException e)
     {
-      logger.warn("Alert Seen");
+      logger.warn("Alert Seen :"+ driver.switchTo().alert().getText());
       driver.switchTo().alert().accept();
       return false;
     }
@@ -134,6 +134,7 @@ public class Utility {
       List<WebElement> Oks= driver.findElements(By.xpath("//button[contains(text(),'OK')]"));
       wait.until(ExpectedConditions.elementToBeClickable(Oks.get(1)));
       ((JavascriptExecutor) driver).executeScript("arguments[0].click();", Oks.get(1));
+      logger.info(Json + " is loaded: " + loadername);
       return true;
     }
     catch (TimeoutException e) {
@@ -141,7 +142,7 @@ public class Utility {
     }
     catch (UnhandledAlertException e)
     {
-      logger.warn("Alert Seen");
+      logger.warn("Alert Seen :"+ driver.switchTo().alert().getText());
       driver.switchTo().alert().accept();
       return false;
     }
@@ -169,7 +170,7 @@ public class Utility {
     }
     catch (UnhandledAlertException e)
     {
-      logger.warn("Alert Seen");
+      logger.warn("Alert Seen :"+ driver.switchTo().alert().getText());
       driver.switchTo().alert().accept();
       return false;
     }

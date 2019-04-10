@@ -2,6 +2,7 @@ package Util;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -11,6 +12,8 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+
 
 public class PreConditions {
 
@@ -38,12 +41,22 @@ public class PreConditions {
 
   }
 
-  public static WebDriver InitializeDriver()
+  public static WebDriver InitializeDriver(Properties properties)
   {
     String ChromeDriverPath = System.getProperty("chromedriver.path");
     System.setProperty("webdriver.chrome.driver", ChromeDriverPath);
-    WebDriver driver = new ChromeDriver();
-    driver.manage().window().fullscreen();
+    WebDriver driver;
+    if(properties.getProperty("browserName").equals("headless")) {
+      ChromeOptions chromeOptions = new ChromeOptions();
+      chromeOptions.setHeadless(true);
+      chromeOptions.addArguments("window-size=1920,1080");
+      chromeOptions.addArguments("--no-sandbox");
+      chromeOptions.addArguments("--whitelisted-ips='localhost'");
+      driver=new ChromeDriver(chromeOptions);
+    }
+    else{
+      driver = new ChromeDriver();
+    }
     driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
     return driver;
   }
