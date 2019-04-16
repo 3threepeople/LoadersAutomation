@@ -17,7 +17,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 
 
 public class PreConditions {
-  static Logger logger=Logger.getLogger(Utility.class);
+  static Logger logger=Logger.getLogger(PreConditions.class);
 
   public static Properties InitializeProperties() throws IOException {
     String PropertiesPath = System.getProperty("props.path");
@@ -70,7 +70,7 @@ public class PreConditions {
     String[] row;
     Boolean skipheader=false;
     while (null!=(row=reader.readNext())){
-      if(!Strings.isNullOrEmpty(row[0]) || !Strings.isNullOrEmpty(row[1]) || !Strings.isNullOrEmpty(row[2])) {
+      if(!Strings.isNullOrEmpty(row[0]) && !Strings.isNullOrEmpty(row[1]) && !Strings.isNullOrEmpty(row[2])) {
         if (skipheader) {
           Loaders.add(row[0]);
           Jsonpaths.add(row[1]);
