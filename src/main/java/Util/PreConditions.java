@@ -1,10 +1,11 @@
 package Util;
 
+import com.google.common.base.Strings;
+import com.opencsv.CSVReader;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
-import java.util.Properties;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
@@ -16,6 +17,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 
 
 public class PreConditions {
+  static Logger logger=Logger.getLogger(Utility.class);
 
   public static Properties InitializeProperties() throws IOException {
     String PropertiesPath = System.getProperty("props.path");
@@ -43,7 +45,7 @@ public class PreConditions {
     String ChromeDriverPath = System.getProperty("chromedriver.path");
     System.setProperty("webdriver.chrome.driver", ChromeDriverPath);
     WebDriver driver;
-    if(properties.getProperty("browserName").equals("headless")) {
+    if("headless".equals(properties.getProperty("BrowserName"))) {
       ChromeOptions chromeOptions = new ChromeOptions();
       chromeOptions.setHeadless(true);
       chromeOptions.addArguments("window-size=1920,1080");
@@ -58,20 +60,35 @@ public class PreConditions {
     return driver;
   }
 
-  public static String[] getTickets(Properties properties) {
-    String splittickets = properties.getProperty("Tickets");
-    return splittickets.split(",");
-  }
+  public static List<List<String>> getcsvproperties() throws IOException {
+    CSVReader reader =new CSVReader(new FileReader(System.getProperty("csv.path")),'\t');
+    List<List<String>> csvproperties=new LinkedList<>();
+    List<String> Loaders=new ArrayList<>();
+    List<String> Jsonpaths=new ArrayList<>();
+    List<String> Tickets=new ArrayList<>();
 
-  public static String[] getLoaders(Properties properties) {
-    String loaders = properties.getProperty("loaders");
-    return loaders.split(",");
-  }
-
-  public static String[] getParentDirectories(Properties properties) {
-    String jsonpath = properties.getProperty("jsonpath");
-    return jsonpath.split(",");
-  }
+    String[] row;
+    Boolean skipheader=false;
+    while (null!=(row=reader.readNext())){
+      if(!Strings.isNullOrEmpty(row[0]) || !Strings.isNullOrEmpty(row[1]) || !Strings.isNullOrEmpty(row[2])) {
+        if (skipheader) {
+          Loaders.add(row[0]);
+          Jsonpaths.add(row[1]);
+          Tickets.add(row[2]);
+        } else {
+          skipheader = true;
+        }
+      }
+      else {
+        logger.error("There is null or empty value in CSV");
+        System.exit(0);
+      }
+    }
+    csvproperties.add(Loaders);
+    csvproperties.add(Jsonpaths);
+    csvproperties.add(Tickets);
+    return csvproperties;
+    }
 
   public static void OpenURLandLogin(Properties properties,WebDriver driver){
     driver.get(properties.getProperty("URL"));
@@ -80,16 +97,4 @@ public class PreConditions {
     driver.findElement(By.className("button")).click();
   }
 
-  public static boolean EligibletoContinue(String[] ParentDirectories, String[] splitloaders, String[] Tickets, Logger logger) {
-    if (ParentDirectories.length != splitloaders.length) {
-      logger.error("The number of Directories and Loaders are not same");
-      return false;
-    }
-
-    if (ParentDirectories.length != Tickets.length) {
-      logger.error("The Number of Tickets is not equal to Number of Loaders");
-      return false;
-    }
-    return true;
-  }
 }

@@ -38,12 +38,11 @@ public class Application {
     LoaderCategory loaderCategory=new LoaderCategory();
     Properties properties=InitializeProperties();
 
-    String[] Tickets = getTickets(properties);
-    String[] splitloaders=getLoaders(properties);
-    String[] ParentDirectories=getParentDirectories(properties);
+    List<List<String>> csvproperties=getcsvproperties();
 
-    if(!EligibletoContinue(ParentDirectories,splitloaders,Tickets,logger))
-    System.exit(0);
+    List<String> splitloaders=csvproperties.get(0);
+    List<String> ParentDirectories=csvproperties.get(1);
+    List<String> Tickets = csvproperties.get(2);
 
     WebDriver driver=InitializeDriver(properties);
     JavascriptExecutor executor = (JavascriptExecutor) driver;
@@ -54,26 +53,28 @@ public class Application {
     NavigateConfigurations(driver,executor);
     stopwatch.start();
 
-    for (int i = 0; i < splitloaders.length; i++) {
-      String loadername = splitloaders[i].trim();
-      String JsonDirectory = ParentDirectories[i].trim();
+    int i=0;
+    for (String loadername:splitloaders){
+      String JsonDirectory = ParentDirectories.get(i);
       File f = new File(JsonDirectory);
       String JsonFiles[] = f.list();
       List<String> Jsons = new ArrayList<String>();
       Jsons = getListofJsons(JsonFiles, Jsons);
       if (null==Jsons || Jsons.isEmpty()) {
-        logger.warn("JSONS not present in the given FilePath:" + ParentDirectories[i]);
+        logger.warn("JSONS not present in the given FilePath:" + JsonDirectory);
         continue;
       }
       String category = loaderCategory.getCategory(loadername);
-      if (!(ClickLoader(category, loadername, driver, wait, executor)))
+      if (!(ClickLoader(category, loadername, driver, wait, executor))) {
+         i++;
         continue;
+      }
       for (String Json:Jsons) {
         logger.info("Processing Json: " + Json);
         UploadJson(driver,wait,JsonDirectory,Json);
         ClickLoadButton(driver, wait, executor);
 
-        if (IsTicketPopUp(driver, wait, Tickets[i])) {
+        if (IsTicketPopUp(driver, wait, Tickets.get(i))) {
           if (IsOverRidePopUp(driver, wait)) {
             ClickSuccessfullyConfigured(driver, wait, Json, loadername);
             increment(TOTALJSONS,OVERRIDEDJSONS);
@@ -85,7 +86,7 @@ public class Application {
         }
         else if(IsSubmitRolesPopUp(driver, wait, JsonDirectory, Json))
         {
-          if (IsTicketPopUp(driver, wait, Tickets[i]))
+          if (IsTicketPopUp(driver, wait, Tickets.get(i)))
           {
             if (IsOverRidePopUp(driver, wait)) {
               ClickSuccessfullyConfigured(driver, wait, Json, loadername);
@@ -106,6 +107,7 @@ public class Application {
           increment(TOTALJSONS,INVALIDJSONS);
         }
       }
+      i++;
     }
       stopwatch.stop();
       logger.info(TOTALJSONS+":"+TotalJsons);

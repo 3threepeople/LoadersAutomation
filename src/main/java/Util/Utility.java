@@ -11,7 +11,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class Utility {
-
   static Logger logger=Logger.getLogger(Utility.class);
 
   private static void submitTicket(WebElement webElement,
