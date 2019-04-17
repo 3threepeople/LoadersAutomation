@@ -9,7 +9,6 @@ import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.*;
 import java.util.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import java.util.List;
 import org.apache.log4j.Logger;
 
 public class Application {

@@ -29,7 +29,7 @@ public class Utility {
                                      WebDriver driver,
                                      WebDriverWait wait,
                                      JavascriptExecutor executor) {
-    if(null==activedropdowntext(driver,wait) || (!activedropdowntext(driver,wait).equals(category))) {
+    if(null==activedropdowntext(driver,wait) || !activedropdowntext(driver,wait).equals(category)) {
       if(category.equals("ETL's")) {
         wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[contains(text(),\"ETL's\")]")));
         WebElement ETL=driver.findElement(By.xpath("//span[contains(text(),\"ETL's\")]"));
