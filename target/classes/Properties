@@ -1,5 +1,4 @@
-loader=add client eligible programs
-jsonpath=/Users/shridharnraykar/Desktop/NewFile
-URL=https://app1.dev.evivehealth.com/admin/login
-username=shridhar.raykar@goevive.com
+URL=https://app1.dev.evivehealth.com/admin/
+BrowserName=headless
+username=shreyas.hosur@goevive.com
 password=adminevive
