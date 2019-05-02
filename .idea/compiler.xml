@@ -6,10 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="com.loaders" />
         <module name="LoadersAutomation" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="com.loaders" target="1.8" />
       <module name="LoadersAutomation" target="1.7" />
     </bytecodeTargetLevel>
   </component>
